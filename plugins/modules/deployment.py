@@ -129,7 +129,7 @@ def needs_update(params, existing):
 
 def main():
     argument_spec = dict(
-        project_key=dict(type="str", required=True),
+        project_key=dict(type="str", required=True, no_log=False),
         deployment_id=dict(type="str", required=True),
         endpoint=dict(type="str"),
         model_version=dict(type="str"),

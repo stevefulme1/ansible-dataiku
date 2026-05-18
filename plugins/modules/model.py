@@ -125,7 +125,7 @@ def needs_update(params, existing):
 
 def main():
     argument_spec = dict(
-        project_key=dict(type="str", required=True),
+        project_key=dict(type="str", required=True, no_log=False),
         model_id=dict(type="str", required=True),
         analysis_id=dict(type="str"),
         state=dict(type="str", choices=["present", "absent"], default="present"),

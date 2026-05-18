@@ -129,7 +129,7 @@ def needs_update(params, existing):
 
 def main():
     argument_spec = dict(
-        project_key=dict(type="str", required=True),
+        project_key=dict(type="str", required=True, no_log=False),
         scenario_id=dict(type="str", required=True),
         type=dict(type="str"),
         active=dict(type="str"),

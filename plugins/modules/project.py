@@ -130,7 +130,7 @@ def needs_update(params, existing):
 def main():
     argument_spec = dict(
         name=dict(type="str", required=True),
-        project_key=dict(type="str", required=True),
+        project_key=dict(type="str", required=True, no_log=False),
         description=dict(type="str"),
         owner=dict(type="str"),
         state=dict(type="str", choices=["present", "absent"], default="present"),

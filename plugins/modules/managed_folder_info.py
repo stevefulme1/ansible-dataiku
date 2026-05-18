@@ -57,7 +57,7 @@ from ansible_collections.stevefulme1.dataiku.plugins.module_utils.api_client imp
 
 def main():
     argument_spec = dict(
-        project_key=dict(type="str"),
+        project_key=dict(type="str", no_log=False),
         folder_id=dict(type="str"),
     )
     argument_spec.update(COMMON_ARGS)
