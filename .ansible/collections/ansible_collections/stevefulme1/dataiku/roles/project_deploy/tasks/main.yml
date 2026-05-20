@@ -1,0 +1,9 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that: project_deploy_api_url is defined
+    quiet: true
+
+- name: Execute project_deploy
+  ansible.builtin.debug:
+    msg: "Role project_deploy for stevefulme1.dataiku"

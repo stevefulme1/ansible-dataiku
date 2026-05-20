@@ -1,0 +1,9 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that: dss_install_api_url is defined
+    quiet: true
+
+- name: Execute dss_install
+  ansible.builtin.debug:
+    msg: "Role dss_install for stevefulme1.dataiku"

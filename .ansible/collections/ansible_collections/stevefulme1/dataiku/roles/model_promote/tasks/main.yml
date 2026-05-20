@@ -1,0 +1,9 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that: model_promote_api_url is defined
+    quiet: true
+
+- name: Execute model_promote
+  ansible.builtin.debug:
+    msg: "Role model_promote for stevefulme1.dataiku"

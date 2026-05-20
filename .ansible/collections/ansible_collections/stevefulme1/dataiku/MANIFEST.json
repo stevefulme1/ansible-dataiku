@@ -1,0 +1,39 @@
+{
+ "collection_info": {
+  "namespace": "stevefulme1",
+  "name": "dataiku",
+  "version": "0.0.1",
+  "authors": [
+   "Steve Fulmer <sfulmer@redhat.com>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "dataiku",
+   "dss",
+   "ai",
+   "ml",
+   "mlops",
+   "tools",
+   "cloud",
+   "data_science"
+  ],
+  "description": "EXPERIMENTAL - proof of concept, not production ready. Ansible Collection for Dataiku DSS enterprise AI platform. Provides modules for project, dataset, recipe, model, deployment, and scenario management via the Dataiku DSS REST API.",
+  "license": [
+   "GPL-3.0-or-later"
+  ],
+  "license_file": null,
+  "dependencies": {},
+  "repository": "https://github.com/stevefulme1/ansible-dataiku",
+  "documentation": "https://github.com/stevefulme1/ansible-dataiku/blob/main/README.md",
+  "homepage": "https://github.com/stevefulme1/ansible-dataiku",
+  "issues": "https://github.com/stevefulme1/ansible-dataiku/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "a19d61312b8e74e1e1a2c518c8117e113b396aae4f0848e735fbedf967c23efc",
+  "format": 1
+ },
+ "format": 1
+}
