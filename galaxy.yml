@@ -5,10 +5,7 @@ version: 0.0.1
 readme: README.md
 authors:
   - Steve Fulmer <sfulmer@redhat.com>
-description: "EXPERIMENTAL - proof of concept, not production ready. >-"
-  Ansible Collection for Dataiku DSS enterprise AI platform.
-  Provides modules for project, dataset, recipe, model, deployment, and
-  scenario management via the Dataiku DSS REST API.
+description: "EXPERIMENTAL - proof of concept, not production ready. Ansible Collection for Dataiku DSS enterprise AI platform. Provides modules for project, dataset, recipe, model, deployment, and scenario management via the Dataiku DSS REST API."
 license:
   - GPL-3.0-or-later
 tags:
