@@ -1,0 +1,82 @@
+---
+- name: Create deployment (check mode)
+  stevefulme1.dataiku.deployment:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    deployment_id: "{{ oci_dataiku_deployment_id }}"
+    endpoint: "{{ oci_dataiku_deployment_endpoint }}"
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create deployment
+  stevefulme1.dataiku.deployment:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    deployment_id: "{{ oci_dataiku_deployment_id }}"
+    endpoint: "{{ oci_dataiku_deployment_endpoint }}"
+  register: _create
+- name: Verify deployment was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.deployment is defined
+- name: Create deployment again (idempotent)
+  stevefulme1.dataiku.deployment:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    deployment_id: "{{ oci_dataiku_deployment_id }}"
+    endpoint: "{{ oci_dataiku_deployment_endpoint }}"
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Update deployment
+  stevefulme1.dataiku.deployment:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    deployment_id: "{{ oci_dataiku_deployment_id }}"
+    endpoint: "{{ oci_dataiku_deployment_endpoint }}"
+    model_version: "{{ oci_dataiku_deployment_model_version }}"
+  register: _update
+- name: Verify deployment was updated
+  ansible.builtin.assert:
+    that:
+      - _update is changed
+- name: Delete deployment
+  stevefulme1.dataiku.deployment:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    deployment_id: "{{ oci_dataiku_deployment_id }}"
+    state: absent
+  register: _delete
+- name: Verify deployment was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete deployment again (idempotent)
+  stevefulme1.dataiku.deployment:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    deployment_id: "{{ oci_dataiku_deployment_id }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

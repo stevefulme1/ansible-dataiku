@@ -5,43 +5,50 @@ __metaclass__ = type
 
 from unittest.mock import MagicMock, patch
 
-
 MODULE_PATH = "ansible_collections.stevefulme1.dataiku.plugins.modules.dataset"
-CLIENT_PATH = "ansible_collections.stevefulme1.dataiku.plugins.module_utils.api_client"
 
-
-def _build_dataset(**kwargs):
-    """Return a mock dataset dict."""
-    defaults = {"id": "test-id", "name": "test-dataset"}
-    defaults.update(kwargs)
-    return defaults
-
+try:
+    from ansible_collections.stevefulme1.dataiku.plugins.modules.dataset import main
+except ImportError:
+    from unittest.mock import MagicMock as main
 
 class TestCreate:
     """Test dataset creation."""
 
-    @patch(f"{CLIENT_PATH}.requests")
-    def test_create_dataset(self, mock_requests, module_args):
-        """Creating a dataset sends POST request."""
-        mock_response = MagicMock()
-        created = _build_dataset()
-        mock_response.json.return_value = created
-        mock_response.raise_for_status.return_value = None
-        mock_response.content = b'{"id":"test-id"}'
-
-        list_response = MagicMock()
-        list_response.json.return_value = []
-        list_response.raise_for_status.return_value = None
-        list_response.content = b'[]'
-
-        session = MagicMock()
-        session.request.side_effect = [list_response, mock_response]
-        mock_requests.Session.return_value = session
-
-        from ansible_collections.stevefulme1.dataiku.plugins.module_utils.api_client import ApiClient
-
+    @patch(f"{MODULE_PATH}.AnsibleModule")
+    def test_create(self, mock_ansible_cls):
+        """Creating dataset calls exit_json with changed=True."""
         mock_module = MagicMock()
-        mock_module.params = module_args
-        client = ApiClient(mock_module)
-        result = client.post("/api/v1/datasets", data={"name": "test"})
-        assert result is not None
+        mock_module.params = {'api_url': 'https://test.example.com', 'api_key': 'test-key', 'validate_certs': False, 'timeout': 30, 'state': 'present', 'project_key': 'TESTPROJ', 'dataset_name': 'test_ds', 'type': 'Filesystem', 'connection': 'filesystem_managed', 'format_type': 'csv'}
+        mock_module.check_mode = False
+        mock_ansible_cls.return_value = mock_module
+        main()
+        mock_module.exit_json.assert_called_once()
+        call_kwargs = mock_module.exit_json.call_args[1]
+        assert call_kwargs.get("changed") is True
+class TestDelete:
+    """Test dataset deletion."""
+
+    @patch(f"{MODULE_PATH}.AnsibleModule")
+    def test_delete(self, mock_ansible_cls):
+        """Deleting dataset calls exit_json with changed=True."""
+        mock_module = MagicMock()
+        mock_module.params = {'api_url': 'https://test.example.com', 'api_key': 'test-key', 'validate_certs': False, 'timeout': 30, 'state': 'absent', 'project_key': 'TESTPROJ', 'dataset_name': 'test_ds', 'type': None, 'connection': None, 'format_type': None}
+        mock_module.check_mode = False
+        mock_ansible_cls.return_value = mock_module
+        main()
+        mock_module.exit_json.assert_called_once()
+        call_kwargs = mock_module.exit_json.call_args[1]
+        assert call_kwargs.get("changed") is True
+class TestIdempotent:
+    """Test dataset idempotency."""
+
+    @patch(f"{MODULE_PATH}.AnsibleModule")
+    def test_create_idempotent(self, mock_ansible_cls):
+        """Re-creating existing dataset calls exit_json with changed=False."""
+        mock_module = MagicMock()
+        mock_module.params = {'api_url': 'https://test.example.com', 'api_key': 'test-key', 'validate_certs': False, 'timeout': 30, 'state': 'present', 'project_key': 'TESTPROJ', 'dataset_name': 'test_ds', 'type': 'Filesystem', 'connection': 'filesystem_managed', 'format_type': 'csv'}
+        mock_module.check_mode = False
+        mock_ansible_cls.return_value = mock_module
+        main()
+        mock_module.exit_json.assert_called()

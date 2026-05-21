@@ -1,0 +1,85 @@
+---
+- name: Create scenario (check mode)
+  stevefulme1.dataiku.scenario:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    scenario_id: "{{ oci_dataiku_scenario_id }}"
+    type: step_based
+    active: true
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create scenario
+  stevefulme1.dataiku.scenario:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    scenario_id: "{{ oci_dataiku_scenario_id }}"
+    type: step_based
+    active: true
+  register: _create
+- name: Verify scenario was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.scenario is defined
+- name: Create scenario again (idempotent)
+  stevefulme1.dataiku.scenario:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    scenario_id: "{{ oci_dataiku_scenario_id }}"
+    type: step_based
+    active: true
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Update scenario
+  stevefulme1.dataiku.scenario:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    scenario_id: "{{ oci_dataiku_scenario_id }}"
+    type: step_based
+    active: false
+  register: _update
+- name: Verify scenario was updated
+  ansible.builtin.assert:
+    that:
+      - _update is changed
+- name: Delete scenario
+  stevefulme1.dataiku.scenario:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    scenario_id: "{{ oci_dataiku_scenario_id }}"
+    state: absent
+  register: _delete
+- name: Verify scenario was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete scenario again (idempotent)
+  stevefulme1.dataiku.scenario:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    scenario_id: "{{ oci_dataiku_scenario_id }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

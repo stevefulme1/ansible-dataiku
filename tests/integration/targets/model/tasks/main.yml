@@ -1,0 +1,68 @@
+---
+- name: Create model (check mode)
+  stevefulme1.dataiku.model:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    model_id: "{{ oci_dataiku_model_id }}"
+    analysis_id: "{{ oci_dataiku_analysis_id }}"
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create model
+  stevefulme1.dataiku.model:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    model_id: "{{ oci_dataiku_model_id }}"
+    analysis_id: "{{ oci_dataiku_analysis_id }}"
+  register: _create
+- name: Verify model was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.model is defined
+- name: Create model again (idempotent)
+  stevefulme1.dataiku.model:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    model_id: "{{ oci_dataiku_model_id }}"
+    analysis_id: "{{ oci_dataiku_analysis_id }}"
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Delete model
+  stevefulme1.dataiku.model:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    model_id: "{{ oci_dataiku_model_id }}"
+    state: absent
+  register: _delete
+- name: Verify model was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete model again (idempotent)
+  stevefulme1.dataiku.model:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    model_id: "{{ oci_dataiku_model_id }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

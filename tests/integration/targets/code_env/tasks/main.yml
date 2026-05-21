@@ -1,0 +1,80 @@
+---
+- name: Create code_env (check mode)
+  stevefulme1.dataiku.code_env:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    env_name: "{{ oci_dataiku_code_env_name }}"
+    env_lang: PYTHON
+    python_interpreter: PYTHON39
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create code_env
+  stevefulme1.dataiku.code_env:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    env_name: "{{ oci_dataiku_code_env_name }}"
+    env_lang: PYTHON
+    python_interpreter: PYTHON39
+  register: _create
+- name: Verify code_env was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.code_env is defined
+- name: Create code_env again (idempotent)
+  stevefulme1.dataiku.code_env:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    env_name: "{{ oci_dataiku_code_env_name }}"
+    env_lang: PYTHON
+    python_interpreter: PYTHON39
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Update code_env
+  stevefulme1.dataiku.code_env:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    env_name: "{{ oci_dataiku_code_env_name }}"
+    env_lang: PYTHON
+    python_interpreter: PYTHON39
+    packages: pandas
+  register: _update
+- name: Verify code_env was updated
+  ansible.builtin.assert:
+    that:
+      - _update is changed
+- name: Delete code_env
+  stevefulme1.dataiku.code_env:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    env_name: "{{ oci_dataiku_code_env_name }}"
+    state: absent
+  register: _delete
+- name: Verify code_env was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete code_env again (idempotent)
+  stevefulme1.dataiku.code_env:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    env_name: "{{ oci_dataiku_code_env_name }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

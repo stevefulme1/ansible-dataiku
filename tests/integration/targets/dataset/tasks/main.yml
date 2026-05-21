@@ -1,0 +1,74 @@
+---
+- name: Create dataset (check mode)
+  stevefulme1.dataiku.dataset:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    dataset_name: "{{ oci_dataiku_dataset_name }}"
+    type: Filesystem
+    connection: filesystem_managed
+    format_type: csv
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create dataset
+  stevefulme1.dataiku.dataset:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    dataset_name: "{{ oci_dataiku_dataset_name }}"
+    type: Filesystem
+    connection: filesystem_managed
+    format_type: csv
+  register: _create
+- name: Verify dataset was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.dataset is defined
+- name: Create dataset again (idempotent)
+  stevefulme1.dataiku.dataset:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    dataset_name: "{{ oci_dataiku_dataset_name }}"
+    type: Filesystem
+    connection: filesystem_managed
+    format_type: csv
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Delete dataset
+  stevefulme1.dataiku.dataset:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    dataset_name: "{{ oci_dataiku_dataset_name }}"
+    state: absent
+  register: _delete
+- name: Verify dataset was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete dataset again (idempotent)
+  stevefulme1.dataiku.dataset:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    dataset_name: "{{ oci_dataiku_dataset_name }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

@@ -1,0 +1,82 @@
+---
+- name: Create project (check mode)
+  stevefulme1.dataiku.project:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    name: "{{ oci_dataiku_project_name }}"
+    project_key: "{{ oci_dataiku_project_key }}"
+    description: Integration test project
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create project
+  stevefulme1.dataiku.project:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    name: "{{ oci_dataiku_project_name }}"
+    project_key: "{{ oci_dataiku_project_key }}"
+    description: Integration test project
+  register: _create
+- name: Verify project was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.project is defined
+- name: Create project again (idempotent)
+  stevefulme1.dataiku.project:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    name: "{{ oci_dataiku_project_name }}"
+    project_key: "{{ oci_dataiku_project_key }}"
+    description: Integration test project
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Update project
+  stevefulme1.dataiku.project:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    name: "{{ oci_dataiku_project_name }}"
+    project_key: "{{ oci_dataiku_project_key }}"
+    description: Updated integration test project
+    owner: "{{ oci_dataiku_project_owner }}"
+  register: _update
+- name: Verify project was updated
+  ansible.builtin.assert:
+    that:
+      - _update is changed
+- name: Delete project
+  stevefulme1.dataiku.project:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    name: "{{ oci_dataiku_project_name }}"
+    project_key: "{{ oci_dataiku_project_key }}"
+    state: absent
+  register: _delete
+- name: Verify project was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete project again (idempotent)
+  stevefulme1.dataiku.project:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    name: "{{ oci_dataiku_project_name }}"
+    project_key: "{{ oci_dataiku_project_key }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

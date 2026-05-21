@@ -1,0 +1,74 @@
+---
+- name: Create recipe (check mode)
+  stevefulme1.dataiku.recipe:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    recipe_name: "{{ oci_dataiku_recipe_name }}"
+    type: python
+    inputs: "{{ oci_dataiku_recipe_input }}"
+    outputs: "{{ oci_dataiku_recipe_output }}"
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create recipe
+  stevefulme1.dataiku.recipe:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    recipe_name: "{{ oci_dataiku_recipe_name }}"
+    type: python
+    inputs: "{{ oci_dataiku_recipe_input }}"
+    outputs: "{{ oci_dataiku_recipe_output }}"
+  register: _create
+- name: Verify recipe was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.recipe is defined
+- name: Create recipe again (idempotent)
+  stevefulme1.dataiku.recipe:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    recipe_name: "{{ oci_dataiku_recipe_name }}"
+    type: python
+    inputs: "{{ oci_dataiku_recipe_input }}"
+    outputs: "{{ oci_dataiku_recipe_output }}"
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Delete recipe
+  stevefulme1.dataiku.recipe:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    recipe_name: "{{ oci_dataiku_recipe_name }}"
+    state: absent
+  register: _delete
+- name: Verify recipe was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete recipe again (idempotent)
+  stevefulme1.dataiku.recipe:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    recipe_name: "{{ oci_dataiku_recipe_name }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed

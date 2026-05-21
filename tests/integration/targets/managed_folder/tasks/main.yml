@@ -1,0 +1,85 @@
+---
+- name: Create managed_folder (check mode)
+  stevefulme1.dataiku.managed_folder:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    folder_id: "{{ oci_dataiku_folder_id }}"
+    name: "{{ oci_dataiku_folder_name }}"
+    connection: filesystem_managed
+  check_mode: true
+  register: _check
+- name: Verify check mode reports changed
+  ansible.builtin.assert:
+    that:
+      - _check is changed
+- name: Create managed_folder
+  stevefulme1.dataiku.managed_folder:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    folder_id: "{{ oci_dataiku_folder_id }}"
+    name: "{{ oci_dataiku_folder_name }}"
+    connection: filesystem_managed
+  register: _create
+- name: Verify managed_folder was created
+  ansible.builtin.assert:
+    that:
+      - _create is changed
+      - _create.managed_folder is defined
+- name: Create managed_folder again (idempotent)
+  stevefulme1.dataiku.managed_folder:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    folder_id: "{{ oci_dataiku_folder_id }}"
+    name: "{{ oci_dataiku_folder_name }}"
+    connection: filesystem_managed
+  register: _idem
+- name: Verify create idempotency
+  ansible.builtin.assert:
+    that:
+      - _idem is not changed
+- name: Update managed_folder
+  stevefulme1.dataiku.managed_folder:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    folder_id: "{{ oci_dataiku_folder_id }}"
+    name: "{{ oci_dataiku_folder_name }}"
+    path: /updated/path
+  register: _update
+- name: Verify managed_folder was updated
+  ansible.builtin.assert:
+    that:
+      - _update is changed
+- name: Delete managed_folder
+  stevefulme1.dataiku.managed_folder:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    folder_id: "{{ oci_dataiku_folder_id }}"
+    state: absent
+  register: _delete
+- name: Verify managed_folder was deleted
+  ansible.builtin.assert:
+    that:
+      - _delete is changed
+- name: Delete managed_folder again (idempotent)
+  stevefulme1.dataiku.managed_folder:
+    api_url: "{{ oci_dataiku_api_url }}"
+    api_key: "{{ oci_dataiku_api_key }}"
+    validate_certs: false
+    project_key: "{{ oci_dataiku_project_key }}"
+    folder_id: "{{ oci_dataiku_folder_id }}"
+    state: absent
+  register: _delete_idem
+- name: Verify delete idempotency
+  ansible.builtin.assert:
+    that:
+      - _delete_idem is not changed
